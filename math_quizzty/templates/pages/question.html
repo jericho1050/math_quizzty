@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load markdownify %}
+{% block content %}
+<div class="gap-4 max-w-[450px] mx-auto">
+    <h1
+        class="text-center font-bold text-xl sm:text-2xl md:text-3xl lg:text-[2.5em] mt-2 sm:mt-3 md:mt-4 mb-2 sm:mb-3 md:mb-8">
+        Question and Answer</h1>
+    <div class="card bg-[#C4D7FF] text-primary-content min-w-[450px] max-w-[450px] drop-shadow-lg">
+        <div class="card-body">
+            <p class="text-black" id="question-text">{{question.Question|markdownify}} </p>
+        </div>
+    </div>
+    <div class="w-full max-w-[450px] p-4" id="choices">
+        <h2 class="mb-4 mt-4 font-bold">Choices:</h2>
+        <form hx-post="{% url 'math_quiz:question' question.Id %}" hx-target="#choices" hx-swap="outerHTML">
+            <div class="grid grid-cols-2 gap-x-6 gap-y-2 px-2">
+                {% for option in question.Options %}
+                <div class="group">
+                    <label
+                        class="flex items-center space-x-2 cursor-pointer border-2 border-solid min-w-[200px] min-h-[50px] p-4 rounded hover:border-[#C4D7FF] transition-colors duration-200 [&:has(input:checked)]:border-[#C4D7FF]">
+                        <input type="radio" name="selected_answer" value="{{ option }}"
+                            class="radio checked:bg-[#C4D7FF] hover:bg-[#C4D7FF]" required />
+                        <span class="label-text">{{ option }}</span>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="flex justify-end mt-4 gap-4">
+                {% comment %} <button id="check-cta"
+                    class="border-2 hover:bg-[#C4D7FF] flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-colors duration-200">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M208,512a24.84,24.84,0,0,1-23.34-16l-39.84-103.6a16.06,16.06,0,0,0-9.19-9.19L32,343.34a25,25,0,0,1,0-46.68l103.6-39.84a16.06,16.06,0,0,0,9.19-9.19L184.66,144a25,25,0,0,1,46.68,0l39.84,103.6a16.06,16.06,0,0,0,9.19,9.19l103,39.63A25.49,25.49,0,0,1,400,320.52a24.82,24.82,0,0,1-16,22.82l-103.6,39.84a16.06,16.06,0,0,0-9.19,9.19L231.34,496A24.84,24.84,0,0,1,208,512Z" />
+                    </svg>
+                    <span>Generate</span>
+                </button>
+                {% endcomment %}
+                <button id="check-cta" name="action" value="check"
+                    class="bg-[#FFF4B5] px-6 py-2 rounded-lg font-semibold hover:bg-[rgb(245,234,171)]">Check
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

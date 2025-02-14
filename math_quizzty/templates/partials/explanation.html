@@ -1,0 +1,74 @@
+{% load markdownify %}
+
+<div class="w-full max-w-[450px] p-4">
+    <h2 class="mb-4 mt-4 font-bold">Choices:</h2>
+    <form hx-post="{% url 'math_quiz:question' question.Id %}">
+        <div class="grid grid-cols-2 gap-x-6 gap-y-2 px-2">
+            {% for option in question.Options %}
+            <div class="group">
+                <label class="flex items-center space-x-2 cursor-pointer border-2 border-solid min-w-[200px] min-h-[50px] p-4 rounded 
+                    {% if option == question.CorrectAnswer %}
+                        border-green-500 bg-green-100
+                    {% elif option == selected_answer %}
+                        border-red-500 bg-red-100
+                    {% endif %}">
+                    <input type="radio" 
+                           name="selected_answer" 
+                           value="{{ option }}"
+                           {% if option == selected_answer %}checked{% endif %}
+                           class="radio {% if option == question.CorrectAnswer %}checked:bg-green-500{% elif option == selected_answer %}checked:bg-red-500{% else %}checked:bg-[#FFF4B5]{% endif %}"
+                           disabled />
+                    <span class="label-text">{{ option }}</span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="flex justify-end mt-4 gap-4">
+            <button id="check-cta"
+                class="border-2 hover:bg-[#C4D7FF] flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-colors duration-200">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M208,512a24.84,24.84,0,0,1-23.34-16l-39.84-103.6a16.06,16.06,0,0,0-9.19-9.19L32,343.34a25,25,0,0,1,0-46.68l103.6-39.84a16.06,16.06,0,0,0,9.19-9.19L184.66,144a25,25,0,0,1,46.68,0l39.84,103.6a16.06,16.06,0,0,0,9.19,9.19l103,39.63A25.49,25.49,0,0,1,400,320.52a24.82,24.82,0,0,1-16,22.82l-103.6,39.84a16.06,16.06,0,0,0-9.19,9.19L231.34,496A24.84,24.84,0,0,1,208,512Z" />
+                </svg>
+                <span>Generate</span>
+            </button>
+
+            <button id="next-cta" 
+                class="bg-[#FFF4B5] px-6 py-2 rounded-lg font-semibold hover:bg-[rgb(245,234,171)]">Next
+            </button>
+        </div>
+    </form>
+</div>
+<div class="container mt-2" id="explanation-container">
+        <h2 class="font-bold text-lg mb-4">Explanation</h2>
+    <div class="whitespace-pre-wrap"> 
+       {{ question.Solution|markdownify}} 
+    </div>
+    <div id="steps" class="mt-4 p-4">
+        {% for step in question.Steps %}
+        
+         <div class="p-2 my-2">
+            <h3 class="font-semibold">{{ step.Title }} </h3>
+            <img src="https://d12lqqa1y5u348.cloudfront.net/images/Picture1.png" alt="image of something here"
+                class="w-full" />
+            <p>{{ step.Result|markdownify }}</p>
+            {% if step.ImageUrl %}
+            <img src="{{ step.ImageUrl }}" alt="Step {{ forloop.counter }}" class="mt-2 max-w-full"/>
+            {% endif %}
+        </div>
+
+        {% endfor %}
+        {% comment %} <div id="step-1" class="p-2 my-2">
+            <h3 class="font-semibold">Step Title 1: Do nothing here</h3>
+            <img src="https://d12lqqa1y5u348.cloudfront.net/images/Picture1.png" alt="image of something here"
+                class="w-full" />
+            <p class="my-4">Result Title 1</p>
+        </div>
+        <div id="step-2" class="p-2 my-2">
+            <h3 class="font-semibold my-2">Step Title 2: Do nothing here</h3>
+            <img src="https://d12lqqa1y5u348.cloudfront.net/images/elementor-placeholder-image.webp"
+                alt="image of something here" class="w-full" />
+            <p class="my-4">Result Title 2</p>
+        </div> {% endcomment %}
+    </div>
+</div>

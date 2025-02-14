@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=math_quizzty
+POSTGRES_USER=gTDvKtgoOQKhmHhhdYOYFaibzQYzJLxi
+POSTGRES_PASSWORD=TJ12LwtqB5KnwrPjWqd8PDv58d1qvKhVKgZuJxVqjIT3Pc89wZjhdXlTX2e1O4fd
