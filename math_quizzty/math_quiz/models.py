@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
 
@@ -13,6 +15,7 @@ class Tag(models.Model):
 
 
 class Question(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     DIFFICULTY_CHOICES = [
         ("easy", "Easy"),
         ("medium", "Medium"),
@@ -29,7 +32,9 @@ class Question(models.Model):
         default="easy",
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="questions"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_questions",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -38,6 +43,25 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question[:50]
+
+    def to_dict(self):
+        """Serialize the question instance to a dictionary"""
+        return {
+            "Id": str(self.id),
+            "Question": self.question,
+            "Options": [opt.option_text for opt in self.options.all()],
+            "CorrectAnswer": self.correct_answer,
+            "Solution": self.solution,
+            "Steps": [
+                {
+                    "Title": step.title,
+                    "Result": step.result,
+                    "ImageUrl": step.image_url if hasattr(step, "image_url") else None,
+                }
+                for step in self.steps.all()
+            ],
+            "Tags": [{"name": tag.name} for tag in self.tags.all()],
+        }
 
 
 class Option(models.Model):

@@ -18,3 +18,4 @@ django-htmx==1.22.0
 django-tailwind==3.8.0
 django-browser-reload==1.18.0
 django-markdownify==0.9.5
+openai==1.63.0

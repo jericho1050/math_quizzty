@@ -6,5 +6,5 @@ from math_quizzty.math_quiz.views import question
 app_name = "math_quiz"
 urlpatterns = [
     path("", index, name="home"),
-    path("question/<int:question_id>", question, name="question"),
+    path("question/<str:question_id>", question, name="question"),
 ]

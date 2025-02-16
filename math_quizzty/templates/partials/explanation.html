@@ -1,8 +1,7 @@
 {% load markdownify %}
-
-<div class="w-full max-w-[450px] p-4">
+<div class="w-full max-w-[450px] p-4" id="choices">
     <h2 class="mb-4 mt-4 font-bold">Choices:</h2>
-    <form hx-post="{% url 'math_quiz:question' question.Id %}">
+    <form hx-post="{% url 'math_quiz:question' question.Id %}" hx-indicator=".htmx-indicator" hx-target="body" hx-swap="outerHTML" hx-disabled-elt="find generate-cta">
         <div class="grid grid-cols-2 gap-x-6 gap-y-2 px-2">
             {% for option in question.Options %}
             <div class="group">
@@ -24,17 +23,19 @@
             {% endfor %}
         </div>
         <div class="flex justify-end mt-4 gap-4">
-            <button id="check-cta"
+            <butto id="generate-cta"
+                name="action"
+                value="generate"
                 class="border-2 hover:bg-[#C4D7FF] flex items-center gap-2 px-6 py-2 rounded-lg font-semibold transition-colors duration-200">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M208,512a24.84,24.84,0,0,1-23.34-16l-39.84-103.6a16.06,16.06,0,0,0-9.19-9.19L32,343.34a25,25,0,0,1,0-46.68l103.6-39.84a16.06,16.06,0,0,0,9.19-9.19L184.66,144a25,25,0,0,1,46.68,0l39.84,103.6a16.06,16.06,0,0,0,9.19,9.19l103,39.63A25.49,25.49,0,0,1,400,320.52a24.82,24.82,0,0,1-16,22.82l-103.6,39.84a16.06,16.06,0,0,0-9.19,9.19L231.34,496A24.84,24.84,0,0,1,208,512Z" />
                 </svg>
                 <span>Generate</span>
-            </button>
+            </butto>
 
             <button id="next-cta" 
-                class="bg-[#FFF4B5] px-6 py-2 rounded-lg font-semibold hover:bg-[rgb(245,234,171)]">Next
+                class="bg-[#FFF4B5] px-6 py-2 rounded-lg font-semibold hover:bg-[rgb(245,234,171)] disabled:bg-gray-200">Next
             </button>
         </div>
     </form>

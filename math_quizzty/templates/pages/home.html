@@ -13,7 +13,7 @@
                         {{ question.Question|markdownify }}
                 </p>
                     <div class="card-actions justify-end mt-4">
-                        <a href="{% url 'math_quiz:question' question.Id %}" class="btn btn-ghost gap-2" hx-boost="true">
+                        <a href="{% url 'math_quiz:question' question.Id %}" class="btn btn-ghost gap-2" hx-boost="true" hx-indicator=".htmx-indicator">
                             Solve
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" class="w-5 h-5">

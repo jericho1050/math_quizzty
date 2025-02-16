@@ -23,7 +23,8 @@
   
   <link href="{% static 'css/project.css' %}" rel="stylesheet" />
   {% tailwind_css %}
-
+  {% comment %} {% include "components/loader.html" with message="Loading..." %}   {% endcomment %}
+  {% include "components/loader.html" %}  
 
 {% endblock css %}
 <!-- Le javascript
@@ -51,7 +52,7 @@
   <div class="mb-1">
     <nav class="navbar bg-base-100">
       <div class="flex-1">
-        <a class="btn btn-ghost text-xl" href="{% url 'math_quiz:home' %}">Math Quizzty</a>
+        <a class="btn btn-ghost text-xl" href="{% url 'math_quiz:home' %}" hx-boost="true">Math Quizzty</a>
       </div>
       
       <div class="navbar-end">
@@ -61,24 +62,29 @@
             {% if request.user.is_authenticated %}
               <li>
                 <a class="hover:bg-base-200 rounded-lg" 
-                   href="{% url 'users:detail' request.user.username %}">{% translate "My Profile" %}</a>
+                   href="{% url 'users:detail' request.user.username %}"
+                   hx-boost="true">{% translate "My Profile" %} </a>
               </li>
               <li>
                 <a class="hover:bg-base-200 rounded-lg" 
-                   href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
+                   href="{% url 'account_logout' %}"
+                   hx-boost="true">{% translate "Sign Out" %}</a>
               </li>
             {% else %}
               {% if ACCOUNT_ALLOW_REGISTRATION %}
                 <li>
                   <a id="sign-up-link" 
                      class="hover:bg-base-200 rounded-lg" 
-                     href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
+                     href="{% url 'account_signup' %}"
+                     hx-boost="true">{% translate "Sign Up" %}</a>
                 </li>
               {% endif %}
               <li>
                 <a id="log-in-link" 
                    class="hover:bg-base-200 rounded-lg" 
-                   href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
+                   href="{% url 'account_login' %}"
+                   hx-boost="true"
+                   >{% translate "Sign In" %}</a>
               </li>
             {% endif %}
           </ul>
@@ -94,7 +100,7 @@
           <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
             {% if request.user.is_authenticated %}
               <li>
-                <a href="{% url 'users:detail' request.user.username %}">{% translate "My Profile" %}</a>
+                <a href="{% url 'users:detail' request.user.username %}" hx-boost="true">{% translate "My Profile" %}</a>
               </li>
               <li>
                 <a href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
@@ -102,11 +108,11 @@
             {% else %}
               {% if ACCOUNT_ALLOW_REGISTRATION %}
                 <li>
-                  <a id="sign-up-link" href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
+                  <a id="sign-up-link" href="{% url 'account_signup' %}" hx-boost="true">{% translate "Sign Up" %}</a>
                 </li>
               {% endif %}
               <li>
-                <a id="log-in-link" href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
+                <a id="log-in-link" href="{% url 'account_login' %}" hx-boost="true">{% translate "Sign In" %}</a>
               </li>
             {% endif %}
           </ul>
