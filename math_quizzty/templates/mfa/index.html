@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Two-Factor Authentication" %}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-md mx-auto">
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <!-- Security Shield Icon -->
+        <div class="flex justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+
+        <h1 class="card-title text-2xl font-bold mb-4 justify-center">
+          {% trans "Two-Factor Authentication" %}
+        </h1>
+
+        {% if not user_mfa %}
+        <div class="alert alert-info shadow-lg mb-4">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>{% trans "Two-factor authentication is not enabled." %}</span>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if user_mfa %}
+        <div class="alert alert-success shadow-lg mb-4">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{% trans "Two-factor authentication is enabled." %}</span>
+          </div>
+        </div>
+
+        <div class="divider">{% trans "Active Methods" %}</div>
+
+        <div class="space-y-4">
+          {% for mfa in user_mfa %}
+          <div class="flex justify-between items-center p-4 bg-base-200 rounded-lg">
+            <div>
+              <h3 class="font-semibold">{{ mfa.name }}</h3>
+              <p class="text-sm text-base-content/70">{{ mfa.type }}</p>
+            </div>
+            <form method="post" action="{% url 'mfa_remove' %}">
+              {% csrf_token %}
+              <input type="hidden" name="id" value="{{ mfa.id }}">
+              <button type="submit" class="btn btn-error btn-sm">
+                {% trans "Remove" %}
+              </button>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="divider">{% trans "Available Methods" %}</div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a href="{% url 'mfa_activate_totp' %}" class="card bg-base-200 hover:bg-base-300 transition-colors cursor-pointer">
+            <div class="card-body p-4">
+              <h2 class="card-title text-lg">{% trans "Authenticator App" %}</h2>
+              <p class="text-sm">{% trans "Use an authentication app like Google Authenticator" %}</p>
+            </div>
+          </a>
+          
+          <a href="{% url 'mfa_generate_recovery_codes' %}" class="card bg-base-200 hover:bg-base-300 transition-colors cursor-pointer">
+            <div class="card-body p-4">
+              <h2 class="card-title text-lg">{% trans "Recovery Codes" %}</h2>
+              <p class="text-sm">{% trans "Generate backup codes for account recovery" %}</p>
+            </div>
+          </a>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

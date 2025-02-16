@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Email Addresses" %}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h1 class="card-title text-2xl font-bold mb-6">{% trans "Email Addresses" %}</h1>
+        
+        {% if user.emailaddress_set.all %}
+        <div class="space-y-6">
+          <p class="text-base-content/80">
+            {% trans 'The following email addresses are associated with your account:' %}
+          </p>
+          
+          <form action="{% url 'account_email' %}" method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="space-y-2">
+              {% for emailaddress in user.emailaddress_set.all %}
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start gap-4">
+                  <input type="radio" name="email" 
+                         value="{{ emailaddress.email }}"
+                         class="radio radio-primary"
+                         {% if emailaddress.primary %}checked{% endif %} />
+                  
+                  <div class="flex items-center gap-2">
+                    <span class="text-base">{{ emailaddress.email }}</span>
+                    
+                    {% if emailaddress.verified %}
+                    <span class="badge badge-success gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-4 h-4 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      {% trans "Verified" %}
+                    </span>
+                    {% else %}
+                    <span class="badge badge-warning gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-4 h-4 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                      </svg>
+                      {% trans "Unverified" %}
+                    </span>
+                    {% endif %}
+                    
+                    {% if emailaddress.primary %}
+                    <span class="badge badge-primary">{% trans "Primary" %}</span>
+                    {% endif %}
+                  </div>
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card-actions">
+              <div class="join">
+                <button class="btn join-item" type="submit" name="action_primary">
+                  {% trans 'Make Primary' %}
+                </button>
+                <button class="btn join-item btn-primary" type="submit" name="action_send">
+                  {% trans 'Re-send Verification' %}
+                </button>
+                <button class="btn join-item btn-error" type="submit" name="action_remove">
+                  {% trans 'Remove' %}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        {% endif %}
+
+        {% if can_add_email %}
+        <div class="divider">{% trans "Add Email Address" %}</div>
+        
+        <form method="post" action="{% url 'account_email' %}" class="add_email space-y-4">
+          {% csrf_token %}
+          
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">{% trans "New Email Address" %}</span>
+            </label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <label class="label">
+              <span class="label-text-alt text-error">{{ form.email.errors }}</span>
+            </label>
+            {% endif %}
+          </div>
+          
+          <div class="card-actions">
+            <button class="btn btn-primary" name="action_add" type="submit">
+              {% trans "Add Email" %}
+            </button>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block inline_javascript %}
+<script>
+(function() {
+  document.getElementById("id_email").setAttribute("class", "input input-bordered w-full");
+  
+  const message = "{% trans 'Do you really want to remove the selected email address?' %}";
+  const removeButtons = document.getElementsByName("action_remove");
+  
+  for (const button of removeButtons) {
+    button.addEventListener("click", function(e) {
+      if (!confirm(message)) {
+        e.preventDefault();
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}

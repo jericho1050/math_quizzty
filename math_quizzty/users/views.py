@@ -8,6 +8,7 @@ from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 
+from math_quizzty.math_quiz.models import Question
 from math_quizzty.users.models import User
 
 
@@ -16,6 +17,12 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     slug_field = "username"
     slug_url_kwarg = "username"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        questions = Question.objects.filter(user=self.request.user)
+        user_quesetions = [question.to_dict() for question in questions]
+        context["user_questions"] = user_quesetions
+        return context
 
 user_detail_view = UserDetailView.as_view()
 

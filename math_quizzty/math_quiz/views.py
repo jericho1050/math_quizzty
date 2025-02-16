@@ -1,29 +1,37 @@
-import json
-
 import environ
 import requests
-from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.utils.text import slugify
-from django_htmx.http import replace_url
 
-from .helpers import generate_math_question
-from .helpers import paraphrase_math_question
-from .helpers import verify_math_question
-from .models import Option
-from .models import Question
-from .models import SolutionStep
-from .models import Tag
+from .helpers import _fetch_question as fetch_question
+from .helpers import _handle_check_action as handle_check_action
+from .helpers import _handle_generate_action as handle_generate_action
 
 env = environ.Env()
 BASE_URL = env.str("DJANGO_QUESTIONS_URL")
 
 
 def index(request):
-    response = requests.get(f"{BASE_URL}/questions", timeout=10)
+    offset = int(request.GET.get("offset", 0))
+    limit = 10
+
+    response = requests.get(
+        f"{BASE_URL}/questions", timeout=10, params={"limit": limit, "offset": offset}
+    )
     questions = response.json()
-    return render(request, "pages/home.html", {"questions": questions})
+
+    # Add pagination data to context
+    context = {
+        "questions": questions["items"],
+        "offset": offset,
+        "limit": limit,
+        "total": questions["count"],
+    }
+
+    if request.headers.get("HX-Request"):
+        return render(request, "partials/question_items.html", context)
+
+    return render(request, "pages/home.html", context)
 
 
 def question(request, question_id):
@@ -31,85 +39,29 @@ def question(request, question_id):
         request.session["next_question_id"] = question_id
         return redirect("account_login")
 
-    response = requests.get(f"{BASE_URL}/question/{question_id}", timeout=10)
-    # it might not exist on the service we're using
-    # so will be infering that it's the ai generated question
-    if response.status_code >= 400:
-        question = get_object_or_404(Question, id=question_id)
-        question = question.to_dict()
-    else:
-        question = response.json()
+    question_data = fetch_question(question_id, request.user)
+
     if request.method == "POST":
-        action = request.POST.get(
-            "action",
-        )  # this is to keep track which button trigger an event
+        action = request.POST.get("action")
         if action == "check":
-            selected_answer = request.POST.get("selected_answer")
-            return render(
-                request,
-                "partials/explanation.html",
-                {
-                    "question": question,
-                    "selected_answer": selected_answer,
-                },
-            )
+            return handle_check_action(request, question_data)
         if action == "generate":
-            generated_question = generate_math_question(json.dumps(question))
-            data = paraphrase_math_question(json.dumps(generated_question))
+            return handle_generate_action(request, question_data)
 
-            verify_response = verify_math_question(json.dumps(data))
-
-            # Check if verification failed
-            if not verify_response or not verify_response["is_correct"]:
+        if action == "next":
+            response = fetch_question(int(question_id) + 1)
+            next_id = int(question_id) + 1
+            response = fetch_question(next_id)
+            if response.get("error"):
                 return render(
                     request,
                     "partials/error.html",
                     {
-                        "message": "Unable to generate a valid question. Please try again.",
-                        "details": verify_response.get(
-                            "message", "Verification failed"
-                        ),
+                        "message": f"No more questions, ID of {next_id} not found",
+                        "status_code": 404,
                     },
+                    status=404,
                 )
 
-            # Get is_correct from the response directly
-            is_correct = verify_response.get("is_correct", False)
-            if not is_correct:
-                return render(
-                    request,
-                    "partials/error.html",
-                    {
-                        "message": "Unable to generate a valid question. Please try again.",
-                        "details": verify_response.get(
-                            "error_description", "Question validation failed"
-                        ),
-                    },
-                )
-            options_data = data.pop("options", [])
-            steps_data = data.pop("steps", [])
-            tags_data = data.pop("tags", [])
-            question_data = Question.objects.create(**data, user=request.user)
-            tags_objects = []
-            for option in options_data:
-                Option.objects.create(question=question_data, option_text=option)
-            for step in steps_data:
-                SolutionStep.objects.create(
-                    question=question_data,
-                    **step,
-                )
-            for tag_data in tags_data:
-                name = tag_data.get("name")  # Assuming API sends 'Name'
-                if name:
-                    tag_obj, _ = Tag.objects.get_or_create(
-                        name=name,
-                        defaults={"slug": slugify(name)},
-                    )
-                    tags_objects.append(tag_obj)
-            question_data.tags.set(tags_objects)
-
-        response = render(
-            request, "pages/question.html", {"question": question_data.to_dict()}
-        )
-        return replace_url(response, f"/question/{question_data.id}")
-
-    return render(request, "pages/question.html", {"question": question})
+            return redirect("math_quiz:question", question_id=str(response["Id"]))
+    return render(request, "pages/question.html", {"question": question_data})

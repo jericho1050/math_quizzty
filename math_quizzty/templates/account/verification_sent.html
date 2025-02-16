@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your Email Address" %}{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-md mx-auto">
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <!-- Icon -->
+        <div class="flex justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        
+        <h1 class="card-title text-2xl font-bold text-center mb-4">
+          {% trans "Verify Your Email Address" %}
+        </h1>
+        
+        <div class="text-center space-y-4">
+          <p class="text-base-content/80">
+            {% blocktrans %}We have sent an email to verify your email address. 
+            Please click the link in the email to complete your registration.{% endblocktrans %}
+          </p>
+          
+          <p class="text-base-content/70 text-sm">
+            {% blocktrans %}If you don't receive the email in a few minutes, 
+            please check your spam folder.{% endblocktrans %}
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="card-actions justify-center">
+          <a href="{% url 'account_email' %}" class="btn btn-outline">
+            {% trans "Change Email Address" %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -57,10 +57,29 @@ module.exports = {
           '100%': {
             opacity: '1'
           }
-        }
+        },
+        'fade-in-down': {
+          '0': {
+            opacity: '0',
+            transform: 'translateY(-1rem)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        'pulse': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '.5' },
+        },
+
       },
       animation: {
-        'tracking-expand': 'tracking-expand 1s ease-in infinite alternate-reverse both'
+        'tracking-expand': 'tracking-expand 1s ease-in infinite alternate-reverse both',
+        'fade-in-down': 'fade-in-down 0.3s ease-out',
+        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+
+
       }
     }
   },

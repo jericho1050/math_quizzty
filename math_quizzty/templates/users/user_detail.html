@@ -1,44 +1,66 @@
 {% extends "base.html" %}
-
 {% load static %}
+{% load markdownify %}
 
 {% block title %}
-  User: 
-  
-    {{ object.username }}
-  
-  
+User: {{ object.username }}
 {% endblock title %}
+
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h2>
-        
-        
-          {{ object.username }}
-        
-      </h2>
+<div class="container mx-auto px-4 py-6">
+  <div class="card bg-base-100 shadow-lg">
+    <div class="card-body">
+      <h2 class="card-title text-2xl font-bold">{{ object.username }}</h2>
       {% if object.name %}
-        <p>{{ object.name }}</p>
+        <p class="text-base">{{ object.name }}</p>
+      {% endif %}
+      {% if object == request.user %}
+        <div class="card-actions mt-4">
+          <a href="{% url 'users:update' %}" class="btn btn-primary">My Info</a>
+          <a href="{% url 'account_email' %}" class="btn btn-primary">E-Mail</a>
+          <a href="{% url 'mfa_index' %}" class="btn btn-primary">MFA</a>
+        </div>
       {% endif %}
     </div>
   </div>
-  {% if object == request.user %}
-    <!-- Action buttons -->
-    <div class="row">
-      <div class="col-sm-12">
-        <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
-        <a class="btn btn-primary"
-           href="{% url 'account_email' %}"
-           role="button">E-Mail</a>
-        <a class="btn btn-primary"
-           href="{% url 'mfa_index' %}"
-           role="button">MFA</a>
-        <!-- Your Stuff: Custom user template urls -->
+
+  <div class="container my-8">
+    <h2 class="font-bold text-2xl mb-6">Generated Questions</h2>
+    {% if user_questions %}
+      <div class="space-y-6">
+        {% for question in user_questions %}
+        <div class="card bg-[#C4D7FF] shadow-lg min-h-50">
+          <div class="card-body">
+            <p class="line-clamp-3">
+              {{ question.Question|markdownify }}
+            </p>
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
+              <div class="flex flex-wrap gap-2">
+                {% if question.Tags %}
+                  {% for tag in question.Tags %}
+                    <span class="badge badge-primary">{{ tag.name }}</span>
+                  {% endfor %}
+                {% endif %}
+              </div>
+              <div class="card-actions">
+                <a href="{% url 'math_quiz:question' question.Id %}" 
+                   class="btn btn-ghost gap-2">
+                  Solve
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                      stroke="currentColor" class="w-5 h-5">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
-    </div>
-    <!-- End Action buttons -->
-  {% endif %}
+    {% else %}
+      <p class="text-base-content/70 mt-4">No questions generated yet.</p>
+    {% endif %}
+  </div>
 </div>
 {% endblock content %}
