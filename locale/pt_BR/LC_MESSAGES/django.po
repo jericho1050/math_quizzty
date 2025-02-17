@@ -1,6 +1,6 @@
 # Translations for the Math Quizzty project
 # Copyright (C) 2025 Jericho serrano
-# Jericho serrano <jericho-serrano@example.com>, 2025.
+# Jericho serrano <jericho-serrano@mathquizzty.xyz>, 2025.
 #
 #, fuzzy
 msgid ""

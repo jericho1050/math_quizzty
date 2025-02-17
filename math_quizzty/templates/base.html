@@ -42,6 +42,7 @@
   <script defer src="{% static 'js/project.js' %}"></script>
   <script defer src="{% static 'js/htmx.min.js' %}"></script>
   <script defer src="{% static 'js/response-targets.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 {% endblock javascript %}
 </head>
@@ -51,9 +52,9 @@
 
   {% block body %}
   <div class="mb-1">
-    <nav class="navbar bg-base-100">
+    <nav class="navbar bg-[#C4FCFF]">
       <div class="flex-1">
-        <a class="btn btn-ghost text-xl" href="{% url 'math_quiz:home' %}" >Math Quizzty</a>
+        <a class="btn btn-ghost text-xl" href="{% url 'math_quiz:home' %}">Math Quizzty</a>
       </div>
       
       <div class="navbar-end">
@@ -64,12 +65,12 @@
               <li>
                 <a class="hover:bg-base-200 rounded-lg" 
                    href="{% url 'users:detail' request.user.username %}"
-                   hx-boost="true">{% translate "My Profile" %} </a>
+                   >{% translate "My Profile" %} </a>
               </li>
               <li>
                 <a class="hover:bg-base-200 rounded-lg" 
                    href="{% url 'account_logout' %}"
-                   hx-boost="true">{% translate "Sign Out" %}</a>
+                   >{% translate "Sign Out" %}</a>
               </li>
             {% else %}
               {% if ACCOUNT_ALLOW_REGISTRATION %}
@@ -77,14 +78,14 @@
                   <a id="sign-up-link" 
                      class="hover:bg-base-200 rounded-lg" 
                      href="{% url 'account_signup' %}"
-                     hx-boost="true">{% translate "Sign Up" %}</a>
+                     >{% translate "Sign Up" %}</a>
                 </li>
               {% endif %}
               <li>
                 <a id="log-in-link" 
                    class="hover:bg-base-200 rounded-lg" 
                    href="{% url 'account_login' %}"
-                   hx-boost="true"
+                   
                    >{% translate "Sign In" %}</a>
               </li>
             {% endif %}
@@ -101,7 +102,7 @@
           <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
             {% if request.user.is_authenticated %}
               <li>
-                <a href="{% url 'users:detail' request.user.username %}" hx-boost="true">{% translate "My Profile" %}</a>
+                <a href="{% url 'users:detail' request.user.username %}" >{% translate "My Profile" %}</a>
               </li>
               <li>
                 <a href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
@@ -109,11 +110,11 @@
             {% else %}
               {% if ACCOUNT_ALLOW_REGISTRATION %}
                 <li>
-                  <a id="sign-up-link" href="{% url 'account_signup' %}" hx-boost="true">{% translate "Sign Up" %}</a>
+                  <a id="sign-up-link" href="{% url 'account_signup' %}" >{% translate "Sign Up" %}</a>
                 </li>
               {% endif %}
               <li>
-                <a id="log-in-link" href="{% url 'account_login' %}" hx-boost="true">{% translate "Sign In" %}</a>
+                <a id="log-in-link" href="{% url 'account_login' %}" >{% translate "Sign In" %}</a>
               </li>
             {% endif %}
           </ul>
@@ -121,7 +122,7 @@
       </div>
     </nav>
   </div>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+  <div ="max-w-7xl mb-auto px-4 sm:px-6 lg:px-8 relative">
     <div id="error-elt" class="fixed top-4 right-4 z-50"></div>
     {% if messages %}
       {% for message in messages %}
@@ -147,29 +148,7 @@
   {% block inline_javascript %}
 
     <script>
-      {% comment %} window.addEventListener('DOMContentLoaded', () => {
-        /* Run whatever you want */
-        document.body.addEventListener('htmx:afterOnLoad', function(evt) {
-          const errorElt = document.getElementById('error-elt');
-          const errorMessage = errorElt.querySelector('.alert');
-          
-          if (errorMessage) {
-            // Add initial opacity to make sure transition works
-            errorMessage.style.opacity = '1';
-            
-            setTimeout(() => {
-              // Fade out
-              errorMessage.style.opacity = '0';
-              errorMessage.style.transition = 'opacity 300ms ease-out';
-              
-              // Remove after fade completes
-              errorMessage.addEventListener('transitionend', () => {
-                errorMessage.remove();
-              });
-            }, 5000);
-          }
-        });
-      }); {% endcomment %}
+      
     </script>
 
   {% endblock inline_javascript %}

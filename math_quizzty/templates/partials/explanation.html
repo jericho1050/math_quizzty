@@ -55,11 +55,14 @@
         
          <div class="p-2 my-2">
             <h3 class="font-semibold">{{ step.Title }} </h3>
-            <img src="https://d12lqqa1y5u348.cloudfront.net/images/Picture1.png" alt="image of something here"
-                class="w-full" />
+            {% comment %} <img src="{{ step.ImageUrl}}" alt="{{ step.Title }}"
+                class="w-full" /> {% endcomment %}
             <p>{{ step.Result|markdownify }}</p>
             {% if step.ImageUrl %}
             <img src="{{ step.ImageUrl }}" alt="Step {{ forloop.counter }}" class="mt-2 max-w-full"/>
+            {% else %}
+
+            <img src="https://d12lqqa1y5u348.cloudfront.net/images/elementor-placeholder-image.webp" alt="Step {{ forloop.counter }}" class="mt-2 max-w-full"/>
             {% endif %}
         </div>
 

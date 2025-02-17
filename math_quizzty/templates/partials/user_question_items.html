@@ -1,0 +1,63 @@
+{% load markdownify %}
+{% for question in user_questions %}
+<div class="card bg-[#C4D7FF] shadow-lg mb-6 min-h-50"
+     {% if forloop.last and offset|add:limit < total %}
+     hx-get="{% url 'users:detail' username=object.username %}?offset={{ offset|add:limit }}"
+     hx-trigger="revealed"
+     hx-swap="afterend"
+     hx-indicator="#loading-more"
+     {% endif %}>
+    <div class="card-body">
+        <div class="absolute top-4 right-4">
+            <button class="btn btn-ghost btn-circle btn-sm"
+                    hx-delete="{% url 'math_quiz:delete_question' question.Id %}"
+                    hx-target="closest .card"
+                    hx-swap="outerHTML"
+                    onClick="confirmDelete(this)">
+                <svg xmlns="http://www.w3.org/2000/svg" 
+                     class="h-5 w-5 text-error" 
+                     fill="none" 
+                     viewBox="0 0 24 24" 
+                     stroke="currentColor">
+                    <path stroke-linecap="round" 
+                          stroke-linejoin="round" 
+                          stroke-width="2" 
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </button>
+        </div>
+        <p class="line-clamp-3">
+            {{ question.Question|markdownify }}
+        </p>
+        <div class="flex flex-wrap items-center justify-between gap-4 mt-4">
+            <div class="flex flex-wrap gap-2">
+                {% if question.Tags %}
+                    {% for tag in question.Tags %}
+                        <span class="badge badge-primary">{{ tag.name }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="card-actions">
+                <a href="{% url 'math_quiz:question' question.Id %}" 
+                   class="btn btn-ghost gap-2"
+                   hx-boost="true"
+                   hx-indicator=".htmx-indicator">
+                    Solve
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% if offset|add:limit < total %}
+<div id="loading-more" class="htmx-indicator">
+    {% include "partials/question_skeleton.html" %}
+    {% include "partials/question_skeleton.html" %}
+</div>
+{% endif %}

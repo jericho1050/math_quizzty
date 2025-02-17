@@ -19,7 +19,7 @@ certificatesResolvers:
   letsencrypt:
     # https://doc.traefik.io/traefik/https/acme/#lets-encrypt
     acme:
-      email: 'jericho-serrano@example.com'
+      email: 'jericho-serrano@mathquizzty.xyz'
       storage: /etc/traefik/acme/acme.json
       # https://doc.traefik.io/traefik/https/acme/#httpchallenge
       httpChallenge:
@@ -28,7 +28,7 @@ certificatesResolvers:
 http:
   routers:
     web-secure-router:
-      rule: 'Host(`example.com`) || Host(`www.example.com`)'
+      rule: 'Host(`mathquizzty.xyz`) || Host(`www.mathquizzty.xyz`)'
       entryPoints:
         - web-secure
       middlewares:
@@ -39,7 +39,7 @@ http:
         certResolver: letsencrypt
 
     web-media-router:
-      rule: '(Host(`example.com`) || Host(`www.example.com`)) && PathPrefix(`/media/`)'
+      rule: '(Host(`mathquizzty.xyz`) || Host(`www.mathquizzty.xyz`)) && PathPrefix(`/media/`)'
       entryPoints:
         - web-secure
       middlewares:

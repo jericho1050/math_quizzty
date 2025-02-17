@@ -3,6 +3,89 @@
 
 {% block title %}{% trans "Email Addresses" %}{% endblock %}
 
+
+{% block inline_javascript %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Style email input for add email form
+  const emailInput = document.getElementById("id_email");
+  if (emailInput) {
+    emailInput.setAttribute("class", "input input-bordered w-full");
+  }
+  
+  // Handle email management form actions (primary, send, remove)
+  const emailManagementForm = document.querySelector('form:not(.add_email)');
+  if (emailManagementForm) {
+    const actionButtons = emailManagementForm.querySelectorAll('[name^="action_"]');
+    
+    actionButtons.forEach(button => {
+      button.addEventListener("click", function(e) {
+        e.preventDefault();
+        const selectedEmail = emailManagementForm.querySelector('input[name="email"]:checked');
+        
+        if (!selectedEmail) {
+          Swal.fire({
+            title: '{% trans "No Email Selected" %}',
+            text: '{% trans "Please select an email address first." %}',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+          });
+          return;
+        }
+
+        const action = this.name;
+        
+        if (action === 'action_remove') {
+          // Show confirmation for remove action
+          Swal.fire({
+            title: '{% trans "Remove Email Address" %}',
+            text: '{% trans "Do you really want to remove the selected email address?" %}',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e11d48',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '{% trans "Yes, remove it" %}',
+            cancelButtonText: '{% trans "Cancel" %}'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              submitForm(emailManagementForm, action);
+            }
+          });
+        } else if (action === 'action_primary') {
+          // Show confirmation for make primary
+          Swal.fire({
+            title: '{% trans "Make Primary" %}',
+            text: '{% trans "Set this email as your primary address?" %}',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: '{% trans "Yes" %}',
+            cancelButtonText: '{% trans "Cancel" %}'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              submitForm(emailManagementForm, action);
+            }
+          });
+        } else {
+          // For re-send verification, just submit
+          submitForm(emailManagementForm, action);
+        }
+      });
+    });
+  }
+
+  function submitForm(form, action) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = action;
+    input.value = 'true';
+    form.appendChild(input);
+    form.submit();
+  }
+});
+</script>
+{% endblock inline_javascript %}
 {% block content %}
 <div class="container mx-auto px-4 py-8">
   <div class="max-w-2xl mx-auto">
@@ -106,21 +189,3 @@
 </div>
 {% endblock %}
 
-{% block inline_javascript %}
-<script>
-(function() {
-  document.getElementById("id_email").setAttribute("class", "input input-bordered w-full");
-  
-  const message = "{% trans 'Do you really want to remove the selected email address?' %}";
-  const removeButtons = document.getElementsByName("action_remove");
-  
-  for (const button of removeButtons) {
-    button.addEventListener("click", function(e) {
-      if (!confirm(message)) {
-        e.preventDefault();
-      }
-    });
-  }
-})();
-</script>
-{% endblock %}

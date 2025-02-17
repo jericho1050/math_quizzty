@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import QuerySet
 from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView
@@ -19,10 +20,39 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        questions = Question.objects.filter(user=self.request.user)
-        user_quesetions = [question.to_dict() for question in questions]
-        context["user_questions"] = user_quesetions
+        offset = int(self.request.GET.get("offset", 0))
+        limit = 10
+
+        questions = Question.objects.filter(user=self.request.user)[
+            offset : offset + limit
+        ]
+        total = Question.objects.filter(user=self.request.user).count()
+
+        user_questions = [question.to_dict() for question in questions]
+        context.update(
+            {
+                "user_questions": user_questions,
+                "offset": offset,
+                "limit": limit,
+                "total": total,
+            }
+        )
+
+        if self.request.headers.get("HX-Request"):
+            return context
+
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get("HX-Request"):
+            return render(
+                self.request,
+                "partials/user_question_items.html",
+                context,
+                **response_kwargs,
+            )
+        return super().render_to_response(context, **response_kwargs)
+
 
 user_detail_view = UserDetailView.as_view()
 
@@ -60,3 +90,4 @@ def custom_login_redirect(request):
     if next_question_id:
         return redirect("math_quiz:question", question_id=next_question_id)
     return redirect("math_quiz:home")  # Default redirect
+

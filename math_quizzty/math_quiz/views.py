@@ -1,7 +1,11 @@
 import environ
 import requests
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+
+from math_quizzty.math_quiz.models import Question
 
 from .helpers import _fetch_question as fetch_question
 from .helpers import _handle_check_action as handle_check_action
@@ -16,7 +20,7 @@ def index(request):
     limit = 10
 
     response = requests.get(
-        f"{BASE_URL}/questions", timeout=10, params={"limit": limit, "offset": offset}
+        f"{BASE_URL}/questions", timeout=10, params={"limit": limit, "offset": offset},
     )
     questions = response.json()
 
@@ -65,3 +69,10 @@ def question(request, question_id):
 
             return redirect("math_quiz:question", question_id=str(response["Id"]))
     return render(request, "pages/question.html", {"question": question_data})
+
+def delete_question(request, question_id):
+    if request.method == "DELETE":
+        question = get_object_or_404(Question, id=question_id, user=request.user)
+        question.delete()
+        return HttpResponse(status=200)
+    return HttpResponse(status=405)
