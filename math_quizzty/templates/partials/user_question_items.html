@@ -1,4 +1,7 @@
 {% load markdownify %}
+{% block extra_css %}
+  {% include "components/loader.html" %}
+{% endblock extra_css %}
 {% for question in user_questions %}
 <div class="card bg-[#C4D7FF] shadow-lg mb-6 min-h-50"
      {% if forloop.last and offset|add:limit < total %}

@@ -2,6 +2,9 @@
 {% load markdownify %}
 {% block content %}
 
+{% block extra_css %}
+  {% include "components/loader.html" %}
+{% endblock extra_css %}
 
 <div class="gap-4 max-w-[450px] mx-auto">
     <h1

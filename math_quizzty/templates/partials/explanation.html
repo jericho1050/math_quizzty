@@ -1,4 +1,7 @@
 {% load markdownify %}
+{% block extra_css %}
+  {% include "components/loader.html" %}
+{% endblock extra_css %}
 <div class="w-full max-w-[450px] p-4" id="choices" >
     <h2 class="mb-4 mt-4 font-bold">Choices:</h2>
     <form hx-post="{% url 'math_quiz:question' question.Id %}" hx-indicator=".htmx-indicator" hx-target="body" hx-swap="outerHTML" hx-disabled-elt="find #generate-cta, find #next-cta" hx-push-url="true" hx-target-error="#error-elt">
