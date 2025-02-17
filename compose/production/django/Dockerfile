@@ -94,6 +94,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 WORKDIR ${APP_HOME}/theme/static_src
 RUN npm install
 
+WORKDIR ${APP_HOME}
+
 USER django
 
 RUN DATABASE_URL="" \
