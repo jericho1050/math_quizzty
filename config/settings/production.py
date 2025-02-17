@@ -28,6 +28,8 @@ CACHES = {
             # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
             "IGNORE_EXCEPTIONS": True,
         },
+        "KEY_PREFIX": "prod",  # Add a prefix to avoid key collisions
+
     },
 }
 
