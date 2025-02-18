@@ -7,7 +7,7 @@ Math Question and Answer with AI-Generator Question
 
 License: MIT
 
-## How to Run
+## Getting Started
 
 ### **Prerequisite**
 
@@ -76,6 +76,25 @@ License: MIT
 ![Figure 1: High-level Software Architecture](docs/images/d1.png)
 ![Figure 2: Prompt Flow Process](docs/images/d2.png)
 </details>
+
+## Technical Overview
+
+### Database
+
+We are using **PostgreSQL** as our database.
+
+### AI Model
+
+We are using **Llama 3.3 Instruct (70B)** via Digital Ocean's GenAI Platform for question generation and Together.ai's API for verifying and paraphrasing the math problem.
+
+### Question Generation Process
+
+1. The user answers a question.
+2. If the answer is incorrect, a "Generate New Question" button is enabled.
+3. Clicking the button triggers a request to the Math Question Generator Agent.
+4. The agent generates a new question based on the original question's topic and difficulty.
+5. The new question is paraphrased and verified using the Math Question Paraphraser and Verifier functions.
+6. The new question is saved to the database and displayed to the user.
 
 <h2 id="agent-configuration">AI Agent Config</h2>
 
@@ -464,3 +483,9 @@ TODO
 ### Docker
 
 See detailed [cookiecutter-django Docker documentation](https://cookiecutter-django.readthedocs.io/en/latest/3-deployment/deployment-with-docker.html).
+
+### Discord
+
+**Discord:** jericho1050#6202
+
+**UserId:** 407084164916183073
